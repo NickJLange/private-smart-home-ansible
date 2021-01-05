@@ -1,0 +1,11 @@
+---
+- hosts: "{{ hostlist }}"
+  # disable fact gathering since this is currently not possible on tasmota devices
+  gather_facts: no
+  tasks:
+    - debug:
+        msg: "{{ hostvars[inventory_hostname].ansible_ssh_host }}"
+    - import_role: name=tobias_richter.tasmota
+      vars:
+        tasmota_commands: "{{ default_tasmota_commands | union(specific_tasmota_commands | default([])) }}"
+      delegate_to: "{{ hostvars[inventory_hostname].ansible_ssh_host }}"
